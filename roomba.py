@@ -1,16 +1,16 @@
 import sys 
 
-dx = None
-dy = None
-source = None
-dirs = None
-dirtPos = None
-allPos = None
-
+dirtPos = {}
+allPos = []
+dx = -1
+dy = -1
+source = (-1, -1)
+dirs = ""
 def do_roomba():
     f = open("test.txt")
     
-    data = f.readline()
+    data = f.read().split("\n")
+    data = data[ 1 : -1 ]
 
     if len(data) < 3:
         sys.exit(0)
@@ -18,31 +18,32 @@ def do_roomba():
     i = 0
     for d in data:
         #parse input here
-
-        if i == len(data) - 1:
+        if i == (len(data) - 1):
             dirs = d
-
-        if i <= 1:
+        elif i <= 1:
             key, value = d.split(' ')
 
             if i == 0:
-                dx = key
-                dy = value
-            if i == 1:
+                dx = int(key)
+                dy = int(value)
+            elif i == 1:
                 source = (int(key), int(value))    
-
-        dirtPos[d] = 1
+        else:
+            dirtPos[d] = 1
         i = i + 1
+    print i
+    print dirtPos
     f.close()
-
     (finalPos, dirtCleaned) = CalcPos()
   
-    print finalPos + "\n" + dirtCleaned
+    print finalPos + "\n" + str(dirtCleaned)
 
 def CalcPos():
-
+    
     last = source
+    print dirs
     for c in dirs:
+        print c
         if c == 'N':
             (xi, yi) = last
             last = (xi, yi + 1)
@@ -55,11 +56,13 @@ def CalcPos():
         if c == 'W':
             (xi, yi) = last
             last = (xi - 1, yi)
+        
+        (xf, yf) = last
 
-        if CheckPos(last) == 1:
-            allPos.append(' '.join(last))
+        allPos.append(str(xf) + " " + str(yf))
 
-    return allPos.index(len(allPos) - 1), GetCleanSpots()
+    (xPos, yPos) = last
+    return (str(xPos) + " " + str(yPos), GetCleanSpots())
 
 def GetCleanSpots():
 
